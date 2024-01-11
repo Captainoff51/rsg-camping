@@ -2,6 +2,7 @@ local RSGCore = exports['rsg-core']:GetCoreObject()
 local SpawnedProps = {}
 local isBusy = false
 local showingtext = false
+local showingprompt = false
 
 ---------------------------------------------
 -- spawn props
@@ -90,26 +91,17 @@ Citizen.CreateThread(function()
             if v.proptype == 'camptent' then
                 local campprop = vector3(v.x, v.y, v.z)
                 local dist = #(pos - campprop)
-                if dist < 3 and not IsPedInAnyVehicle(PlayerPedId(), false) then
-                    if not showingtext then
-                        lib.showTextUI('['..Config.MenuKeybind..'] - Open Menu', {
-                            position = "top-center",
-                            icon = 'fa-solid fa-bars',
-                            style = {
-                                borderRadius = 0,
-                                backgroundColor = '#82283E',
-                                color = 'white'
-                            }
-                        })
-                        showingtext = true
-                    end
-                    if IsControlJustReleased(0, RSGCore.Shared.Keybinds[Config.MenuKeybind]) then
-                        TriggerEvent('rsg-camping:client:mainmenu', v.builder)
-                    end
-                else
-                    Wait(1000)
-                    lib.hideTextUI()
-                    showingtext = false
+                if dist < 3 and not IsPedInAnyVehicle(PlayerPedId(), false) and not showingprompt then
+                    exports['rsg-core']:createPrompt(k, campprop, RSGCore.Shared.Keybinds['ENTER'], 'Open Menu', {
+                        type = 'client',
+                        event = 'rsg-camping:client:mainmenu',
+                        args = { v.builder },
+                    })
+                    showingprompt = true
+                end
+                if dist > 3 and showingprompt then
+                    exports['rsg-core']:deletePrompt(k)
+                    showingprompt = false
                 end
             end
         end
