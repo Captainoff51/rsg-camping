@@ -92,7 +92,7 @@ Citizen.CreateThread(function()
                 local campprop = vector3(v.x, v.y, v.z)
                 local dist = #(pos - campprop)
                 if dist < 3 and not IsPedInAnyVehicle(PlayerPedId(), false) and not showingprompt then
-                    exports['rsg-core']:createPrompt(k, campprop, RSGCore.Shared.Keybinds['ENTER'], 'Open Menu', {
+                    exports['rsg-core']:createPrompt(k..'-'..v.id, campprop, RSGCore.Shared.Keybinds['ENTER'], 'Open Menu', {
                         type = 'client',
                         event = 'rsg-camping:client:mainmenu',
                         args = { v.builder },
@@ -100,7 +100,7 @@ Citizen.CreateThread(function()
                     showingprompt = true
                 end
                 if dist > 3 and showingprompt then
-                    exports['rsg-core']:deletePrompt(k)
+                    exports['rsg-core']:deletePrompt(k..'-'..v.id)
                     showingprompt = false
                 end
             end
